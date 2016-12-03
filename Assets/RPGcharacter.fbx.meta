@@ -86,6 +86,7 @@ ModelImporter:
     100156: toe.R_end
     100158: upper_arm.L
     100160: upper_arm.R
+    100162: Plane
     400000: chest
     400002: Circle
     400004: f_index.01.L
@@ -167,12 +168,16 @@ ModelImporter:
     400156: toe.R_end
     400158: upper_arm.L
     400160: upper_arm.R
+    400162: Plane
+    2300000: Plane
+    3300000: Plane
     4300000: Circle
+    4300002: Plane
     9500000: //RootNode
     13700000: Circle
   materials:
     importMaterials: 1
-    materialName: 0
+    materialName: 1
     materialSearch: 1
   animations:
     legacyGenerateAnimations: 4
@@ -202,7 +207,7 @@ ModelImporter:
     generateSecondaryUV: 0
     useFileUnits: 1
     optimizeMeshForGPU: 1
-    keepQuads: 0
+    keepQuads: 1
     weldVertices: 1
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001

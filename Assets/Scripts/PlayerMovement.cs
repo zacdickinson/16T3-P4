@@ -32,6 +32,7 @@ public class PlayerMovement : MonoBehaviour {
 	void MoveCharacter () {
 		moveDir = Time.fixedDeltaTime * cameraTrans.forward * Input.GetAxis ("Vertical") * moveSpeed;
 		moveDir += Time.fixedDeltaTime * cameraTrans.right * Input.GetAxis ("Horizontal") * moveSpeed;
+		moveDir.y = 0f;
 
 		trans.position += moveDir;
 
