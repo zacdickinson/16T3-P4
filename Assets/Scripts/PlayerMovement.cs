@@ -4,8 +4,8 @@ using UnityEngine;
 
 public class PlayerMovement : MonoBehaviour {
 
-	public float moveSpeed = 2.5f;
-	public float rotationSpeed = 10f;
+	[SerializeField] private float moveSpeed = 4f;
+	[SerializeField] private float rotationSpeed = 5.5f;
 
 	Transform trans;
 	Transform cameraTrans;
@@ -13,8 +13,13 @@ public class PlayerMovement : MonoBehaviour {
 	Vector3 moveDir;
 
 	bool isWalking = false;
+	Animator myAnim;
+
+	[SerializeField] private bool canMove = true;
+	bool inBattle = false;
 
 	void Start () {
+		myAnim = GetComponent<Animator> ();
 		trans = transform;
 		cameraTrans = GameObject.FindGameObjectWithTag ("CameraRotation").transform;
 	}
@@ -23,16 +28,19 @@ public class PlayerMovement : MonoBehaviour {
 
 		CheckWalking ();
 
-		if (isWalking) {
+		if (isWalking && canMove) {
 			MoveCharacter ();
 			RotateCharacter ();
 		}
+
+		myAnim.SetBool ("isWalking", isWalking && canMove);
 	}
 
 	void MoveCharacter () {
-		moveDir = Time.fixedDeltaTime * cameraTrans.forward * Input.GetAxis ("Vertical") * moveSpeed;
-		moveDir += Time.fixedDeltaTime * cameraTrans.right * Input.GetAxis ("Horizontal") * moveSpeed;
+		moveDir = cameraTrans.forward * Input.GetAxis ("Vertical");
+		moveDir += cameraTrans.right * Input.GetAxis ("Horizontal");
 		moveDir.y = 0f;
+		moveDir = moveDir.normalized * Time.fixedDeltaTime * moveSpeed;
 
 		trans.position += moveDir;
 
@@ -40,16 +48,40 @@ public class PlayerMovement : MonoBehaviour {
 	}
 
 	void RotateCharacter () {
-		float moveAmount = Mathf.Abs (Input.GetAxis ("Horizontal")) + Mathf.Abs (Input.GetAxis ("Vertical"));
 		Quaternion moveRot = Quaternion.LookRotation (moveDir);
-		trans.rotation = Quaternion.Lerp (trans.rotation, moveRot, Time.fixedDeltaTime * rotationSpeed * moveAmount);
+		trans.rotation = Quaternion.Lerp (trans.rotation, moveRot, Time.fixedDeltaTime * rotationSpeed);
 	}
 
 	void CheckWalking () {
-		if (Mathf.Abs (Input.GetAxis ("Horizontal")) + Mathf.Abs (Input.GetAxis ("Vertical")) > 0f) {
+		if (Mathf.Abs (Input.GetAxis ("Horizontal")) + Mathf.Abs (Input.GetAxis ("Vertical")) > 0.4f) {
 			isWalking = true;
 		} else {
 			isWalking = false;
 		}
+	}
+
+	void OnEnable () {
+		
+		BattleManager.OnStart += OnBattleStart;
+		BattleManager.OnWon += OnBattleEnd;
+	}
+
+
+	void OnDisable () {
+
+		BattleManager.OnStart -= OnBattleStart;
+		BattleManager.OnWon -= OnBattleEnd;
+	}
+
+	void OnBattleStart () {
+		
+		inBattle = true;
+		canMove = false;
+	}
+
+	void OnBattleEnd () {
+		
+		inBattle = false;
+		canMove = true;
 	}
 }
